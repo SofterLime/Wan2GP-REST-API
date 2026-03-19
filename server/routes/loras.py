@@ -48,6 +48,12 @@ def _infer_architectures(stem: str) -> list[str]:
         archs.append("ltx2_22B")
     if "flux" in lower:
         archs.append("pi_flux")
+    if "z_image" in lower or "zimage" in lower:
+        archs.append("z_image")
+    if "qwen" in lower:
+        archs.append("qwen_image")
+    if "hunyuan" in lower or "hyvideo" in lower:
+        archs.append("hunyuan")
     if not archs:
         archs.extend(["wan_2_1", "wan_2_2"])
     return archs
@@ -85,6 +91,22 @@ def _get_model_architecture(wgp: object, model_type: str) -> str | None:
     return md.get("architecture", "")
 
 
+def _get_model_lora_directory(wgp: object, model_type: str) -> Path | None:
+    """Use wgp.get_lora_dir(model_type) to resolve the model-specific LoRA subdirectory."""
+    get_dir = getattr(wgp, "get_lora_dir", None)
+    if get_dir is None:
+        return None
+    try:
+        result = get_dir(model_type)
+        if result:
+            p = Path(result)
+            if p.is_dir():
+                return p
+    except Exception:
+        pass
+    return None
+
+
 @router.get("/loras")
 async def get_loras(
     request: Request,
@@ -96,6 +118,11 @@ async def get_loras(
         wgp = runtime.module
     except Exception:
         return JSONResponse([])
+
+    if model_type:
+        model_dir = _get_model_lora_directory(wgp, model_type)
+        if model_dir is not None:
+            return JSONResponse(_scan_lora_directory(model_dir))
 
     lora_dir = _get_lora_directory(wgp)
     entries = _scan_lora_directory(lora_dir)
