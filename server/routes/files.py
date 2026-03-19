@@ -22,7 +22,7 @@ CONTENT_TYPES: dict[str, str] = {
 }
 
 
-@router.get("/files/{filename}")
+@router.get("/files/{filename}", response_model=None)
 async def get_file(filename: str, request: Request) -> FileResponse | JSONResponse:
     config = request.app.state.config
 
