@@ -18,5 +18,5 @@ async def upload_file(request: Request, file: UploadFile) -> dict:
     content = await file.read()
     dest.write_bytes(content)
 
-    server_path = f"/uploads/{unique_name}"
+    server_path = str(dest.resolve())
     return {"filename": unique_name, "server_path": server_path}
