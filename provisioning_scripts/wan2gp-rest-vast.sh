@@ -12,7 +12,7 @@ apt-get install -y \
 cd "$WORKSPACE"
 [[ -d "${WORKSPACE}/Wan2GP-REST-API" ]] || git clone https://github.com/SofterLime/Wan2GP-REST-API
 cd Wan2GP-REST-API
-[[ -n "{WAN2GP_VERSION:-}" ]] && git checkout "$WAN2GP_VERSION"
+[[ -n "${WAN2GP_VERSION:-}" ]] && git checkout "$WAN2GP_VERSION"
 
 # Find the most appropriate backend given W2GP's torch version restrictions
 if [[ -z "${CUDA_VERSION:-}" ]]; then
@@ -50,7 +50,7 @@ echo "Starting Wan2GP-REST-API"
 cd "${WORKSPACE}/Wan2GP-REST-API"
 export XDG_RUNTIME_DIR=/tmp
 export SDL_AUDIODRIVER=dummy
-python wgp.py 2>&1
+python -m server.main 2>&1
 
 EOL
 
@@ -76,6 +76,21 @@ stdout_events_enabled=true
 stdout_logfile_maxbytes=0
 stdout_logfile_backups=0
 EOL
+
+# Register the REST API service in the Vast portal so it is allowed to start
+if [[ -f /etc/portal.yaml ]]; then
+    if ! grep -q 'Wan2GP-REST-API' /etc/portal.yaml; then
+        cat >> /etc/portal.yaml << 'PORTAL'
+  Wan2GP-REST-API:
+    hostname: localhost
+    external_port: 8100
+    internal_port: 8100
+    open_path: /api/health
+    name: Wan2GP-REST-API
+PORTAL
+        echo "Added Wan2GP-REST-API to /etc/portal.yaml"
+    fi
+fi
 
 # Update supervisor to start the new service
 supervisorctl reread
