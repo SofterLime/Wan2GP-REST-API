@@ -86,6 +86,11 @@ stringzilla==4.0.14
 xxhash
 munch
 wetext==0.1.2
+# REST API server
+fastapi
+uvicorn[standard]
+python-multipart
+
 # Optional / commented out
 # transformers==4.46.3  # for llamallava pre-patch
 # rembg==2.0.65         # non-GPU fallback
