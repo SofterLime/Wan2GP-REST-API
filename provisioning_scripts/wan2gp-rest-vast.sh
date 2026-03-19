@@ -11,7 +11,7 @@ apt-get install -y \
 
 cd "$WORKSPACE"
 [[ -d "${WORKSPACE}/Wan2GP-REST-API" ]] || git clone https://github.com/SofterLime/Wan2GP-REST-API
-cd Wan2GP
+cd Wan2GP-REST-API
 [[ -n "{WAN2GP_VERSION:-}" ]] && git checkout "$WAN2GP_VERSION"
 
 # Find the most appropriate backend given W2GP's torch version restrictions
@@ -40,27 +40,27 @@ utils=/opt/supervisor-scripts/utils
 . "${utils}/cleanup_generic.sh"
 . "${utils}/environment.sh"
 . "${utils}/exit_serverless.sh"
-. "${utils}/exit_portal.sh" "Wan2GP"
+. "${utils}/exit_portal.sh" "Wan2GP-REST-API"
 
-echo "Starting Wan2GP"
+echo "Starting Wan2GP-REST-API"
 
 . /etc/environment
 . /venv/main/bin/activate
 
-cd "${WORKSPACE}/Wan2GP"
+cd "${WORKSPACE}/Wan2GP-REST-API"
 export XDG_RUNTIME_DIR=/tmp
 export SDL_AUDIODRIVER=dummy
 python wgp.py 2>&1
 
 EOL
 
-chmod +x /opt/supervisor-scripts/wan2gp.sh
+chmod +x /opt/supervisor-scripts/wan2gp-rest-vast.sh
 
 # Generate the supervisor config files
-cat > /etc/supervisor/conf.d/wan2gp.conf << 'EOL'
-[program:wan2gp]
+cat > /etc/supervisor/conf.d/wan2gp-rest-vast.conf << 'EOL'
+[program:wan2gp-rest-vast]
 environment=PROC_NAME="%(program_name)s"
-command=/opt/supervisor-scripts/wan2gp.sh
+command=/opt/supervisor-scripts/wan2gp-rest-vast.sh
 autostart=true
 autorestart=true
 exitcodes=0
