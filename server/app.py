@@ -12,7 +12,9 @@ from .routes.files import router as files_router
 from .routes.generate import router as generate_router
 from .routes.health import router as health_router
 from .routes.jobs import router as jobs_router
+from .routes.loras import router as loras_router
 from .routes.models import router as models_router
+from .routes.profiles import router as profiles_router
 from .routes.upload import router as upload_router
 
 if TYPE_CHECKING:
@@ -71,5 +73,7 @@ def create_app(
     app.include_router(jobs_router)
     app.include_router(files_router)
     app.include_router(models_router)
+    app.include_router(profiles_router)
+    app.include_router(loras_router)
 
     return app
