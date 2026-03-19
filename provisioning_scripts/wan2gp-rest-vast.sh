@@ -10,7 +10,7 @@ apt-get install -y \
     --no-install-recommends
 
 cd "$WORKSPACE"
-[[ -d "${WORKSPACE}/Wan2GP" ]] || git clone https://github.com/deepbeepmeep/Wan2GP
+[[ -d "${WORKSPACE}/Wan2GP-REST-API" ]] || git clone https://github.com/SofterLime/Wan2GP-REST-API
 cd Wan2GP
 [[ -n "{WAN2GP_VERSION:-}" ]] && git checkout "$WAN2GP_VERSION"
 
@@ -32,7 +32,7 @@ uv pip install torch==${TORCH_VERSION:-2.7.1} torchvision torchaudio --torch-bac
 uv pip install -r requirements.txt
 
 # Create Wan2GP startup scripts
-cat > /opt/supervisor-scripts/wan2gp.sh << 'EOL'
+cat > /opt/supervisor-scripts/wan2gp-rest-vast.sh << 'EOL'
 #!/bin/bash
 
 utils=/opt/supervisor-scripts/utils
